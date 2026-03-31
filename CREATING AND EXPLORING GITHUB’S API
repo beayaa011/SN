@@ -1,0 +1,18 @@
+import requests
+
+token = "YOUR_TOKEN"
+headers = {"Authorization": f"token {token}"}
+
+u = input("Enter GitHub username: ")
+
+# User info
+r = requests.get(f"https://api.github.com/users/{u}", headers=headers)
+if r.ok:
+    d = r.json()
+    print(d["name"], d["login"], d["followers"], d["public_repos"])
+
+# Repos (top 5)
+r = requests.get(f"https://api.github.com/users/{u}/repos", headers=headers)
+if r.ok:
+    for repo in r.json()[:5]:
+        print(repo["name"], "⭐", repo["stargazers_count"])
