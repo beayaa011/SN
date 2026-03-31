@@ -1,0 +1,25 @@
+import requests
+
+#  Replace with your LinkedIn Access Token
+ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"
+
+# API endpoint to get profile details
+url = "https://api.linkedin.com/v2/me"
+
+# Headers
+headers = {
+    "Authorization": f"Bearer {ACCESS_TOKEN}",
+    "Connection": "Keep-Alive"
+}
+
+# Sending GET request
+response = requests.get(url, headers=headers)
+
+# Checking response
+if response.status_code == 200:
+    data = response.json()
+    print("User Profile Data:")
+    print(data)
+else:
+    print("Error:", response.status_code)
+    print(response.text)
