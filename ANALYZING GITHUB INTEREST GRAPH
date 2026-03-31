@@ -1,0 +1,32 @@
+import requests, networkx as nx, matplotlib.pyplot as plt, os
+
+users = ["realpython", "kennethreitz", "miguelgrinberg"]
+headers = {"Authorization": f"Bearer {os.getenv('YOUR_GITHUB_TOKEN')}"}
+
+# Get starred repos
+get_repos = lambda u: [r["full_name"] for r in 
+                      requests.get(f"https://api.github.com/users/{u}/starred", headers=headers).json()]
+
+data = {u: get_repos(u) for u in users}
+
+# Create graph
+G = nx.Graph()
+for u in users: G.add_node(u)
+
+edges = {}
+for u1 in users:
+    for u2 in users:
+        if u1 != u2:
+            common = set(data[u1]) & set(data[u2])
+            if common:
+                G.add_edge(u1, u2)
+                edges[(u1, u2)] = "\n".join(list(common)[:2])
+
+# Plot
+pos = nx.spring_layout(G)
+nx.draw(G, pos, with_labels=True, node_color='lightblue')
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edges, font_size=8)
+
+plt.title("GitHub Interest Graph")
+plt.axis("off")
+plt.show()
