@@ -1,0 +1,30 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from wordcloud import WordCloud
+import pandas as pd
+import matplotlib.pyplot as plt
+
+docs = [
+    "Artificial intelligence is transforming the world",
+    "Data privacy is important in artificial intelligence",
+    "Artificial intelligence and privacy concerns are growing"
+]
+
+# TF-IDF
+df = pd.DataFrame(
+    TfidfVectorizer(stop_words='english')
+    .fit_transform(docs).toarray()
+)
+
+# Top keywords
+print("Top:", df.sum().nlargest(10).index.tolist())
+
+# Docs with 'artificial' & 'privacy'
+cols = TfidfVectorizer(stop_words='english').fit(docs).get_feature_names_out()
+df.columns = cols
+print("Docs:", df[(df['artificial'] > 0) & (df['privacy'] > 0)].index.tolist())
+
+# WordCloud
+WordCloud().generate_from_frequencies(df.iloc[0]).to_image().show()
+
+# Common keywords
+print("Common:", df.columns[df.min() > 0].tolist())
